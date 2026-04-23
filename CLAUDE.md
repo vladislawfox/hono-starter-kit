@@ -320,8 +320,10 @@ Configured under `.claude/`:
 | Skill | `integration-tests` | Auto-loads when editing `*.test.ts` — `app.request()`, `truncate`, `clearRateLimits`, `ErrorResponse` shape |
 | Command | `/add-feature <name>` | Scaffold a new feature module (schema + repository + service + route, register in `app.ts`) |
 | Command | `/pr-ready` | Run the full pre-PR gate: lint → types → cycles → dead-code → tests → docker build |
+| Command | `/commit` | Run the full pre-PR gate, then create a conventional-commit (`type(scope): description`). Aborts on any gate failure |
 | Agent | `code-reviewer` | Review uncommitted changes against project conventions. Reports high-signal issues only — does not fix |
 | Agent | `test-writer` | Generate integration tests for a feature route covering all declared response codes |
+| Agent | `plan-validator` | Validate a plan via Gemini 3.1 Pro Preview (adversarial framing, read-only repo access). Accepts a file path or inline plan text; optional `--deep` for codebase-investigator mode. Requires `gemini` CLI installed |
 
 Skills auto-load via `paths:` glob — you don't invoke them, they appear when relevant. Commands run via `/<name>`. Agents run via the Agent tool with `subagent_type: "<name>"`.
 
