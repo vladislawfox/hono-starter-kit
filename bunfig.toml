@@ -1,0 +1,13 @@
+[install]
+peer = true
+
+[install.cache]
+disable = false
+
+[test]
+coverage = true
+coverageThreshold = { line = 0.7 }
+
+[run]
+bun = true
+silent = false

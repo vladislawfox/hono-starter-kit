@@ -1,0 +1,55 @@
+name: Dependency check
+
+on:
+  schedule:
+    # Monday 07:00 UTC (~09:00-10:00 Kyiv time)
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Weekly outdated + audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Outdated packages (report only)
+        run: |
+          {
+            echo "## 📦 Outdated packages"
+            echo ""
+            echo '```'
+            bun outdated 2>&1 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Security audit (fails job on vulnerabilities)
+        run: |
+          {
+            echo "## 🔐 Security audit"
+            echo ""
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          set +e
+          bun audit 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+          AUDIT_EXIT=${PIPESTATUS[0]}
+          set -e
+
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$AUDIT_EXIT" -ne 0 ]; then
+            echo "::error::bun audit reported vulnerabilities (exit $AUDIT_EXIT)"
+            exit "$AUDIT_EXIT"
+          fi

@@ -1,0 +1,31 @@
+# Local development stack for hono-starter-kit.
+# Non-standard ports chosen to avoid conflict with a Postgres running on the host.
+#
+# Quick start:
+#   docker compose up -d        # start Postgres
+#   bun run db:migrate          # apply migrations (once schemas exist)
+#   bun run dev                 # start API
+#   docker compose down         # stop (data persists in named volume)
+
+services:
+  postgres:
+    image: postgres:18.3-alpine3.23
+    container_name: hono-starter-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-starter}
+      POSTGRES_USER: ${POSTGRES_USER:-starter}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpass}
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "25572:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-starter} -d ${POSTGRES_DB:-starter}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

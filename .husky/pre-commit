@@ -1,0 +1,12 @@
+set -e
+
+echo "→ biome (lint + format)"
+bun run check:ci
+
+echo "→ tsc --noEmit"
+bunx tsc --noEmit
+
+echo "→ madge (circular deps)"
+bun run check:cycles
+
+echo "✓ pre-commit checks passed"

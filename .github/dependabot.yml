@@ -1,0 +1,50 @@
+version: 2
+
+updates:
+  # npm / bun deps. Grouped minor+patch into one weekly PR to avoid noise;
+  # major updates ship as individual PRs so they get proper review.
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Kyiv"
+    open-pull-requests-limit: 10
+    groups:
+      all-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+    commit-message:
+      prefix: "chore(deps)"
+      include: "scope"
+    labels:
+      - "dependencies"
+
+  # GitHub Actions (checkout, setup-bun, etc.) — keep action SHAs/tags fresh.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Kyiv"
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - "ci"
+      - "dependencies"
+
+  # docker-compose.yml + Dockerfile base image bumps.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Kyiv"
+    commit-message:
+      prefix: "chore(docker)"
+    labels:
+      - "docker"
+      - "dependencies"

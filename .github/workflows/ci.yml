@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, typecheck, test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:18.3-alpine3.23
+        env:
+          POSTGRES_USER: starter
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: starter
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U starter -d starter"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      NODE_ENV: test
+      PORT: "3000"
+      DATABASE_URL: postgresql://starter:ci@localhost:5432/starter
+      FRONTEND_URL: http://localhost:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: .bun-version
+
+      - name: Cache bun install
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Lint (biome, CI mode — no autowrite)
+        run: bun run check:ci
+
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Cycle check (madge)
+        run: bun run check:cycles
+
+      - name: Dead code & unused deps (knip)
+        run: bun run check:deadcode
+
+      - name: Apply migrations
+        run: bun run db:migrate
+
+      - name: Test
+        run: bun test
+
+      - name: Docker build (catches Dockerfile breakage before deploy)
+        run: docker build -t hono-starter-kit:ci .
