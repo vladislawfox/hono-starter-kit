@@ -4,7 +4,7 @@ Production-ready [Hono](https://hono.dev) template for Bun. Feature-based archit
 
 ## Features
 
-- **Runtime**: Bun 1.3.12 (pinned), native `SQL` driver, built-in test runner
+- **Runtime**: Bun 1.3.13 (pinned), native `SQL` driver, built-in test runner
 - **Framework**: Hono 4 with `@hono/zod-openapi` + Scalar UI at `/reference`
 - **Validation**: Zod 4 schemas drive both request validation and OpenAPI docs
 - **DB**: Drizzle ORM + Bun's native Postgres driver, UUID v7 primary keys
@@ -19,7 +19,7 @@ Production-ready [Hono](https://hono.dev) template for Bun. Feature-based archit
 
 ## Quick start
 
-Prerequisites: [Bun](https://bun.sh) ≥ 1.3.12, [Docker](https://www.docker.com) (for local Postgres).
+Prerequisites: [Bun](https://bun.sh) ≥ 1.3.13, [Docker](https://www.docker.com) (for local Postgres).
 
 ```sh
 bun install                   # install deps + set up Husky hook
@@ -77,7 +77,7 @@ Architectural conventions (who can import from whom) live in [CLAUDE.md](./CLAUD
 
 | Concern | Choice |
 |---|---|
-| Runtime | Bun 1.3.12 |
+| Runtime | Bun 1.3.13 |
 | Framework | Hono 4 + `@hono/zod-openapi` |
 | OpenAPI UI | Scalar |
 | Validation | Zod 4 |
@@ -135,7 +135,7 @@ See [`.env.example`](./.env.example) for the canonical list.
 
 ## Deployment
 
-`Dockerfile` is multi-stage on `oven/bun:1.3.12-alpine`, runs as the non-root `bun` user, and includes a `HEALTHCHECK` hitting `/health`. Typecheck runs in the builder stage as a pre-deploy sanity gate.
+`Dockerfile` is multi-stage on `oven/bun:1.3.13-alpine`, runs as the non-root `bun` user, and includes a `HEALTHCHECK` hitting `/health`. Typecheck runs in the builder stage as a pre-deploy sanity gate.
 
 ```sh
 docker build -t hono-starter-kit .
