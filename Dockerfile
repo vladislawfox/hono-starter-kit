@@ -2,7 +2,7 @@
 # hono-starter-kit — Bun 1.3 multi-stage image.
 # Pin bun to exact patch for reproducibility (bump together with .bun-version).
 
-FROM oven/bun:1.3.12-alpine AS builder
+FROM oven/bun:1.3.13-alpine AS builder
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ COPY src ./src
 RUN bunx tsc --noEmit
 
 # ------- runtime stage -------
-FROM oven/bun:1.3.12-alpine AS runtime
+FROM oven/bun:1.3.13-alpine AS runtime
 
 WORKDIR /app
 
