@@ -41,5 +41,8 @@
     "knip": "^6.0.0",
     "madge": "^8.0.0",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "esbuild": "^0.25.12"
   }
 }
